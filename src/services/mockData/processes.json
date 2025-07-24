@@ -1,0 +1,107 @@
+[
+  {
+    "Id": 1,
+    "name": "Software Development",
+    "stages": [
+      {
+        "id": "stage-1",
+        "name": "Backlog",
+        "order": 1,
+        "wipLimit": 10,
+        "color": "#6B7280"
+      },
+      {
+        "id": "stage-2", 
+        "name": "In Progress",
+        "order": 2,
+        "wipLimit": 5,
+        "color": "#3B82F6"
+      },
+      {
+        "id": "stage-3",
+        "name": "Review",
+        "order": 3,
+        "wipLimit": 3,
+        "color": "#F59E0B"
+      },
+      {
+        "id": "stage-4",
+        "name": "Done",
+        "order": 4,
+        "wipLimit": null,
+        "color": "#10B981"
+      }
+    ],
+    "createdAt": "2024-01-15T10:00:00Z"
+  },
+  {
+    "Id": 2,
+    "name": "Content Creation",
+    "stages": [
+      {
+        "id": "stage-5",
+        "name": "Ideas",
+        "order": 1,
+        "wipLimit": 15,
+        "color": "#6B7280"
+      },
+      {
+        "id": "stage-6",
+        "name": "Writing",
+        "order": 2,
+        "wipLimit": 3,
+        "color": "#3B82F6"
+      },
+      {
+        "id": "stage-7",
+        "name": "Editing",
+        "order": 3,
+        "wipLimit": 2,
+        "color": "#F59E0B"
+      },
+      {
+        "id": "stage-8",
+        "name": "Published",
+        "order": 4,
+        "wipLimit": null,
+        "color": "#10B981"
+      }
+    ],
+    "createdAt": "2024-01-16T14:30:00Z"
+  },
+  {
+    "Id": 3,
+    "name": "Client Onboarding",
+    "stages": [
+      {
+        "id": "stage-9",
+        "name": "New Leads",
+        "order": 1,
+        "wipLimit": 20,
+        "color": "#6B7280"
+      },
+      {
+        "id": "stage-10",
+        "name": "Discovery",
+        "order": 2,
+        "wipLimit": 5,
+        "color": "#3B82F6"
+      },
+      {
+        "id": "stage-11",
+        "name": "Proposal",
+        "order": 3,
+        "wipLimit": 3,
+        "color": "#F59E0B"
+      },
+      {
+        "id": "stage-12",
+        "name": "Active Client",
+        "order": 4,
+        "wipLimit": null,
+        "color": "#10B981"
+      }
+    ],
+    "createdAt": "2024-01-17T09:15:00Z"
+  }
+]
