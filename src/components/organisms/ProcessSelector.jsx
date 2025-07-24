@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import templateService from "@/services/api/templateService";
 import { toast } from "react-toastify";
+import templateService from "@/services/api/templateService";
 import processService from "@/services/api/processService";
 import ApperIcon from "@/components/ApperIcon";
 import Select from "@/components/atoms/Select";
@@ -174,8 +174,7 @@ if (loading) {
             </div>
           </div>
         </div>
-      )}
+)}
     </div>
   );
-}
 }
