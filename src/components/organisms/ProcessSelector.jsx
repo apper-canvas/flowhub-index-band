@@ -26,7 +26,7 @@ async function loadProcesses() {
     } finally {
       setLoading(false);
     }
-}
+  }
 
   async function loadTemplates() {
     setTemplatesLoading(true);
@@ -100,27 +100,25 @@ if (loading) {
             </option>
           ))}
         </Select>
-<div className="flex gap-2 ml-3">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={handleOpenTemplateModal}
-            >
-              <ApperIcon name="Layout" size={16} className="mr-2" />
-              Start from Template
-            </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => toast.info("Create new process feature coming soon!")}
-            >
-              <ApperIcon name="Plus" size={16} className="mr-2" />
-              New Process
-            </Button>
-          </div>
-        </div>
+        <div className="flex gap-2 ml-3">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleOpenTemplateModal}
+          >
+            <ApperIcon name="Layout" size={16} className="mr-2" />
+            Start from Template
+          </Button>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => toast.info("Create new process feature coming soon!")}
+          >
+            <ApperIcon name="Plus" size={16} className="mr-2" />
+            New Process
+          </Button>
+</div>
       </div>
-
       {/* Template Selection Modal */}
       {showTemplateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -172,9 +170,9 @@ if (loading) {
                 </div>
               )}
             </div>
-          </div>
+</div>
         </div>
-)}
+      )}
     </div>
   );
 }
