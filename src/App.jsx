@@ -1,8 +1,8 @@
-import React from "react";
-import { Route, Router, Routes } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import ProcessInstancesPage from "@/components/pages/ProcessInstancesPage";
-import "@/index.css";
+import React from 'react'
+import { Route, BrowserRouter, Routes } from "react-router-dom";
+import { ToastContainer } from 'react-toastify'
+import ProcessInstancesPage from '@/components/pages/ProcessInstancesPage'
+import '@/index.css'
 import SettingsPage from "@/components/pages/SettingsPage";
 import TemplatesPage from "@/components/pages/TemplatesPage";
 import DashboardPage from "@/components/pages/DashboardPage";
@@ -10,12 +10,13 @@ import ProcessesPage from "@/components/pages/ProcessesPage";
 import Header from "@/components/organisms/Header";
 
 function App() {
-  return (
-    <Router>
+return (
+    <BrowserRouter>
       <div className="min-h-screen bg-background">
         <Header />
-        <main>
+        <main className="container mx-auto px-6 py-8">
           <Routes>
+            <Route path="/" element={<DashboardPage />} />
             <Route path="/processes" element={<ProcessesPage />} />
             <Route path="/instances" element={<ProcessInstancesPage />} />
             <Route path="/templates" element={<TemplatesPage />} />
@@ -34,8 +35,8 @@ function App() {
           pauseOnHover
           style={{ zIndex: 9999 }}
         />
-      </div>
-    </Router>
+</div>
+    </BrowserRouter>
   );
 }
 
