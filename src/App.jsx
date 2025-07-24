@@ -17,7 +17,8 @@ return (
         <main className="container mx-auto px-6 py-8">
 <Routes>
             <Route path="/" element={<ProcessesPage />} />
-            <Route path="/processes" element={<DashboardPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/processes" element={<ProcessesPage />} />
             <Route path="/instances" element={<ProcessInstancesPage />} />
             <Route path="/templates" element={<TemplatesPage />} />
             <Route path="/settings" element={<SettingsPage />} />
