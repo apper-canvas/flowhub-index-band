@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import ProcessCreationModal from "@/components/molecules/ProcessCreationModal";
 import templateService from "@/services/api/templateService";
 import processService from "@/services/api/processService";
 import ApperIcon from "@/components/ApperIcon";
@@ -7,27 +8,49 @@ import Select from "@/components/atoms/Select";
 import Button from "@/components/atoms/Button";
 import Loading from "@/components/ui/Loading";
 export default function ProcessSelector({ selectedProcess, onProcessChange }) {
-const [processes, setProcesses] = useState([]);
+const [showCreateModal, setShowCreateModal] = useState(false);
+  const [processes, setProcesses] = useState([]);
+  const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
-  const [templates, setTemplates] = useState([]);
   const [templatesLoading, setTemplatesLoading] = useState(false);
 
   useEffect(() => {
     loadProcesses();
+    loadTemplates();
   }, []);
-async function loadProcesses() {
+
+  const loadProcesses = async () => {
     try {
       const data = await processService.getAll();
       setProcesses(data);
     } catch (error) {
-      console.error('Error loading processes:', error);
-      toast.error('Failed to load processes');
+      console.error("Error loading processes:", error);
+      toast.error("Failed to load processes");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
+  const handleCreateProcess = async (processData) => {
+    try {
+      const newProcess = await processService.create(processData);
+      if (newProcess) {
+        // Update the processes list
+        const updatedProcesses = await processService.getAll();
+        setProcesses(updatedProcesses);
+        
+        // Auto-select the new process
+        onProcessChange(newProcess);
+        
+        toast.success("Process created successfully!");
+      }
+    } catch (error) {
+      console.error("Error creating process:", error);
+      toast.error("Failed to create process");
+      throw error; // Re-throw to handle in modal
+    }
+  };
   async function loadTemplates() {
     setTemplatesLoading(true);
     try {
@@ -110,15 +133,22 @@ if (loading) {
             Start from Template
           </Button>
           <Button
-            variant="primary"
+variant="primary"
             size="sm"
-            onClick={() => toast.info("Create new process feature coming soon!")}
+            onClick={() => setShowCreateModal(true)}
           >
             <ApperIcon name="Plus" size={16} className="mr-2" />
             New Process
           </Button>
 </div>
       </div>
+
+      {/* Process Creation Modal */}
+      <ProcessCreationModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onProcessCreated={handleCreateProcess}
+      />
       {/* Template Selection Modal */}
       {showTemplateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
