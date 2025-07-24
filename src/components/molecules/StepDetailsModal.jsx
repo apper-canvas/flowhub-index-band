@@ -13,29 +13,35 @@ const StepDetailsModal = ({
   step, 
   onSave 
 }) => {
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     title: '',
     description: '',
     estimatedDuration: '',
-    stepType: 'Manual'
+    stepType: 'Manual',
+    currentStatus: 'Not Started',
+    notes: ''
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+useEffect(() => {
     if (step) {
       setFormData({
         title: step.title || step.name || '',
         description: step.description || '',
         estimatedDuration: step.estimatedDuration || '',
-        stepType: step.stepType || 'Manual'
+        stepType: step.stepType || 'Manual',
+        currentStatus: step.currentStatus || 'Not Started',
+        notes: step.notes || ''
       });
     } else {
       setFormData({
         title: '',
         description: '',
         estimatedDuration: '',
-        stepType: 'Manual'
+        stepType: 'Manual',
+        currentStatus: 'Not Started',
+        notes: ''
       });
     }
     setErrors({});
@@ -60,7 +66,7 @@ const StepDetailsModal = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -75,7 +81,9 @@ const StepDetailsModal = ({
         name: formData.title.trim(), // Keep name for backward compatibility
         description: formData.description.trim(),
         estimatedDuration: formData.estimatedDuration.trim(),
-        stepType: formData.stepType
+        stepType: formData.stepType,
+        currentStatus: formData.currentStatus,
+        notes: formData.notes.trim()
       });
       onClose();
     } catch (error) {
@@ -192,6 +200,33 @@ const StepDetailsModal = ({
                 <option value="Review">Review</option>
                 <option value="Approval">Approval</option>
               </Select>
+</FormField>
+
+            <FormField
+              label="Status"
+              required
+            >
+              <Select
+                value={formData.currentStatus}
+                onChange={(e) => handleInputChange('currentStatus', e.target.value)}
+              >
+                <option value="Not Started">Not Started</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+                <option value="Blocked">Blocked</option>
+              </Select>
+            </FormField>
+
+            <FormField
+              label="Notes"
+            >
+              <textarea
+                className="input-field min-h-[80px] resize-none"
+                value={formData.notes}
+                onChange={(e) => handleInputChange('notes', e.target.value)}
+                placeholder="Add progress notes or comments..."
+                rows={3}
+              />
             </FormField>
 
             {/* Actions */}

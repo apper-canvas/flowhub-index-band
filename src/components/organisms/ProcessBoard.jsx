@@ -22,11 +22,22 @@ const [tasks, setTasks] = useState([]);
   const [editingStep, setEditingStep] = useState(null);
   const [stepModalOpen, setStepModalOpen] = useState(false);
   const [startingInstance, setStartingInstance] = useState(false);
-
-  const handleStartInstance = async () => {
+  const [stepStatuses, setStepStatuses] = useState({});
+const handleStartInstance = async () => {
     try {
       setStartingInstance(true);
       const instanceName = `${process.ProcessName || process.name} - ${new Date().toLocaleDateString()}`;
+      
+      // Initialize step statuses for all stages
+      const initialStepStatuses = {};
+      process.stages.forEach((stage, index) => {
+        initialStepStatuses[stage.id] = {
+          status: index === 0 ? "In Progress" : "Not Started",
+          notes: "",
+          updatedAt: new Date().toISOString(),
+          updatedBy: "Current User"
+        };
+      });
       
       const instanceData = {
         processId: process.Id,
@@ -40,7 +51,8 @@ const [tasks, setTasks] = useState([]);
         assignedTo: "Current User",
         priority: "Medium",
         startedAt: new Date().toISOString(),
-        estimatedCompletion: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days from now
+        estimatedCompletion: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+        stepStatuses: initialStepStatuses
       };
 
       await processInstanceService.create(instanceData);
@@ -120,12 +132,39 @@ const [tasks, setTasks] = useState([]);
   if (error) return <Error message={error} onRetry={loadTasks} />;
 
 const handleEditStep = (stage) => {
-    setEditingStep(stage);
+    // Include current step status if available
+    const stepWithStatus = {
+      ...stage,
+      currentStatus: stepStatuses[stage.id]?.status || "Not Started",
+      notes: stepStatuses[stage.id]?.notes || ""
+    };
+    setEditingStep(stepWithStatus);
     setStepModalOpen(true);
   };
 
-  const handleSaveStep = async (updatedStep) => {
+const handleSaveStep = async (updatedStep) => {
     try {
+      // Update step status if provided
+      if (updatedStep.currentStatus || updatedStep.notes !== undefined) {
+        const statusUpdate = {
+          status: updatedStep.currentStatus || stepStatuses[updatedStep.id]?.status || "Not Started",
+          notes: updatedStep.notes || "",
+          updatedAt: new Date().toISOString(),
+          updatedBy: "Current User"
+        };
+        
+        setStepStatuses(prev => ({
+          ...prev,
+          [updatedStep.id]: statusUpdate
+        }));
+        
+        // If this is for a process instance, update the instance
+        if (process.instanceId) {
+          await processInstanceService.updateStepStatus(process.instanceId, updatedStep.id, statusUpdate);
+        }
+      }
+      
+      // Update process stage details
       await processService.updateStage(process.Id, updatedStep.id, updatedStep);
       toast.success("Step details updated successfully!");
       
@@ -169,8 +208,9 @@ const handleEditStep = (stage) => {
         </Button>
       </div>
       <div className="flex gap-6 p-6 overflow-x-auto custom-scrollbar min-h-[calc(100vh-200px)]">
-        {process.stages.map((stage) => {
+{process.stages.map((stage) => {
           const stageTasks = getTasksByStage(stage.id);
+          const stepStatus = stepStatuses[stage.id];
           
           return (
             <StageColumn
@@ -178,6 +218,7 @@ const handleEditStep = (stage) => {
               stage={stage}
               taskCount={stageTasks.length}
               isOver={dragOverStage === stage.id}
+              stepStatus={stepStatus}
               onAddTask={() => toast.info("Add task feature coming soon!")}
               onEditStep={() => handleEditStep(stage)}
             >
@@ -201,6 +242,7 @@ const handleEditStep = (stage) => {
                   >
                     <TaskCard
                       task={task}
+                      stepStatus={stepStatus}
                       onClick={() => toast.info("Task details modal coming soon!")}
                       onEdit={() => toast.info("Edit task feature coming soon!")}
                       isDragging={draggedTask?.Id === task.Id}

@@ -20,11 +20,12 @@ const processInstanceService = {
     return instances.map(instance => ({ ...instance }));
   },
 
-  async create(instanceData) {
+async create(instanceData) {
     await new Promise(resolve => setTimeout(resolve, 400));
     const newInstance = {
       ...instanceData,
       Id: processInstances.length > 0 ? Math.max(...processInstances.map(i => i.Id)) + 1 : 1,
+      stepStatuses: instanceData.stepStatuses || {},
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -32,7 +33,7 @@ const processInstanceService = {
     return { ...newInstance };
   },
 
-  async update(id, instanceData) {
+async update(id, instanceData) {
     await new Promise(resolve => setTimeout(resolve, 350));
     const index = processInstances.findIndex(i => i.Id === parseInt(id));
     if (index !== -1) {
@@ -41,6 +42,20 @@ const processInstanceService = {
         ...instanceData,
         updatedAt: new Date().toISOString()
       };
+      return { ...processInstances[index] };
+    }
+    return null;
+  },
+
+  async updateStepStatus(instanceId, stepId, statusData) {
+    await new Promise(resolve => setTimeout(resolve, 250));
+    const index = processInstances.findIndex(i => i.Id === parseInt(instanceId));
+    if (index !== -1) {
+      if (!processInstances[index].stepStatuses) {
+        processInstances[index].stepStatuses = {};
+      }
+      processInstances[index].stepStatuses[stepId] = statusData;
+      processInstances[index].updatedAt = new Date().toISOString();
       return { ...processInstances[index] };
     }
     return null;
@@ -87,9 +102,15 @@ const processInstanceService = {
           status: nextStageIndex === totalStages - 1 ? "Completed" : "Active"
         };
       }
-      return { ...processInstances[index] };
+return { ...processInstances[index] };
     }
     return null;
+  },
+
+  async getStepStatuses(instanceId) {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    const instance = processInstances.find(i => i.Id === parseInt(instanceId));
+    return instance?.stepStatuses || {};
   }
 };
 

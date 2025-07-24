@@ -7,6 +7,7 @@ const StageColumn = ({
   stage, 
   taskCount = 0,
   isOver = false,
+  stepStatus,
   children, 
   onAddTask,
   onEditStep,
@@ -22,6 +23,26 @@ const getStepTypeColor = (stepType) => {
       Approval: "bg-purple-100 text-purple-800"
     };
     return colors[stepType] || colors.Manual;
+};
+
+  const getStatusColor = (status) => {
+    const colors = {
+      "Not Started": "text-gray-500 bg-gray-100",
+      "In Progress": "text-blue-700 bg-blue-100",
+      "Completed": "text-green-700 bg-green-100",
+      "Blocked": "text-red-700 bg-red-100"
+    };
+    return colors[status] || colors["Not Started"];
+  };
+
+  const getStatusIcon = (status) => {
+    const icons = {
+      "Not Started": "Circle",
+      "In Progress": "Clock", 
+      "Completed": "CheckCircle",
+      "Blocked": "AlertCircle"
+    };
+    return icons[status] || icons["Not Started"];
   };
 
   return (
@@ -31,7 +52,7 @@ const getStepTypeColor = (stepType) => {
       className
     )}>
       <div className="bg-white rounded-xl shadow-lg h-full flex flex-col">
-        <div className="p-4 border-b border-gray-100">
+<div className="p-4 border-b border-gray-100">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div 
@@ -60,7 +81,31 @@ const getStepTypeColor = (stepType) => {
                 <ApperIcon name="Plus" size={16} />
               </button>
             </div>
-          </div>
+</div>
+
+          {/* Step Status */}
+          {stepStatus && (
+            <div className="mb-3">
+              <div className="flex items-center gap-2 mb-2">
+                <ApperIcon 
+                  name={getStatusIcon(stepStatus.status)} 
+                  size={14} 
+                  className={getStatusColor(stepStatus.status).split(' ')[0]}
+                />
+                <span className={cn(
+                  "px-2 py-0.5 rounded-full text-xs font-medium",
+                  getStatusColor(stepStatus.status)
+                )}>
+                  {stepStatus.status}
+                </span>
+              </div>
+              {stepStatus.notes && (
+                <p className="text-xs text-gray-600 italic line-clamp-2">
+                  "{stepStatus.notes}"
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Step Details */}
           {stage.description && (

@@ -145,3 +145,40 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #5B21B6, #4C1D95);
 }
+
+/* Step Status Styles */
+.step-status-not-started {
+  @apply text-gray-500;
+}
+
+.step-status-in-progress {
+  @apply text-blue-600;
+}
+
+.step-status-completed {
+  @apply text-green-600;
+}
+
+.step-status-blocked {
+  @apply text-red-600;
+}
+
+.step-status-indicator {
+  @apply inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.step-status-indicator.not-started {
+  @apply bg-gray-100 text-gray-700;
+}
+
+.step-status-indicator.in-progress {
+  @apply bg-blue-100 text-blue-700;
+}
+
+.step-status-indicator.completed {
+  @apply bg-green-100 text-green-700;
+}
+
+.step-status-indicator.blocked {
+  @apply bg-red-100 text-red-700;
+}

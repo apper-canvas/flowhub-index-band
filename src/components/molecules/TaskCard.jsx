@@ -11,16 +11,39 @@ const TaskCard = ({
   onClick, 
   onEdit,
   isDragging = false,
+  stepStatus,
   className,
   ...props 
 }) => {
-  const isOverdue = new Date(task.dueDate) < new Date();
+const isOverdue = new Date(task.dueDate) < new Date();
+  
+  const getStatusColor = (status) => {
+    const colors = {
+      "Not Started": "text-gray-500 bg-gray-100",
+      "In Progress": "text-blue-700 bg-blue-100",
+      "Completed": "text-green-700 bg-green-100",
+      "Blocked": "text-red-700 bg-red-100"
+    };
+    return colors[status] || colors["Not Started"];
+  };
+
+  const getStatusIcon = (status) => {
+    const icons = {
+      "Not Started": "Circle",
+      "In Progress": "Clock",
+      "Completed": "CheckCircle",
+      "Blocked": "AlertCircle"
+    };
+    return icons[status] || icons["Not Started"];
+  };
   
   return (
     <motion.div
       className={cn(
         "task-card card-elevated p-4 cursor-pointer select-none",
         isDragging && "dragging",
+        stepStatus?.status === "Completed" && "ring-2 ring-green-200",
+        stepStatus?.status === "Blocked" && "ring-2 ring-red-200",
         className
       )}
       onClick={onClick}
@@ -28,10 +51,27 @@ const TaskCard = ({
       whileTap={{ scale: 0.98 }}
       {...props}
     >
-      <div className="flex items-start justify-between mb-3">
-        <h4 className="font-semibold text-gray-900 text-sm leading-tight pr-2">
-          {task.title}
-        </h4>
+<div className="flex items-start justify-between mb-3">
+        <div className="flex-1 pr-2">
+          <h4 className="font-semibold text-gray-900 text-sm leading-tight mb-1">
+            {task.title}
+          </h4>
+          {stepStatus && (
+            <div className="flex items-center gap-1">
+              <ApperIcon 
+                name={getStatusIcon(stepStatus.status)} 
+                size={12} 
+                className={cn("step-status-icon", getStatusColor(stepStatus.status).split(' ')[0])}
+              />
+              <span className={cn(
+                "text-xs px-2 py-0.5 rounded-full font-medium",
+                getStatusColor(stepStatus.status)
+              )}>
+                {stepStatus.status}
+              </span>
+            </div>
+          )}
+        </div>
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -73,7 +113,15 @@ const TaskCard = ({
             title={task.assignee}
           />
         )}
-      </div>
+</div>
+
+      {stepStatus?.notes && (
+        <div className="mt-3 pt-3 border-t border-gray-100">
+          <p className="text-xs text-gray-600 italic line-clamp-2">
+            "{stepStatus.notes}"
+          </p>
+        </div>
+      )}
     </motion.div>
   );
 };
