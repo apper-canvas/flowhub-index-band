@@ -14,12 +14,12 @@ const processService = {
     return process ? { ...process } : null;
   },
 
-  async create(processData) {
+async create(processData) {
     await new Promise(resolve => setTimeout(resolve, 400));
     const newProcess = {
       ...processData,
-      Id: Math.max(...processes.map(p => p.Id)) + 1,
-      createdAt: new Date().toISOString()
+      Id: processes.length > 0 ? Math.max(...processes.map(p => p.Id)) + 1 : 1,
+      createdAt: processData.createdAt || new Date().toISOString()
     };
     processes.push(newProcess);
     return { ...newProcess };
