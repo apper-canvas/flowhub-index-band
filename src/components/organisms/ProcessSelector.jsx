@@ -116,10 +116,10 @@ if (loading) {
           onChange={handleProcessChange}
           className="flex-1"
         >
-          <option value="">Choose a process...</option>
+<option value="">Choose a process...</option>
           {processes.map((process) => (
             <option key={process.Id} value={process.Id}>
-              {process.ProcessName}
+              {process.name}
             </option>
           ))}
         </Select>
