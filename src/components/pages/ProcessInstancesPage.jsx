@@ -110,16 +110,21 @@ const handleStatusChange = async (instanceId, newStatus) => {
       if (filter === "all") return true;
       return instance.status.toLowerCase() === filter.toLowerCase();
     })
-    .sort((a, b) => {
+.sort((a, b) => {
       if (sortBy === "updatedAt") {
-        return new Date(b.updatedAt) - new Date(a.updatedAt);
+        const dateA = a.updated_at_c ? new Date(a.updated_at_c) : new Date(0);
+        const dateB = b.updated_at_c ? new Date(b.updated_at_c) : new Date(0);
+        // Check for invalid dates and fallback to epoch
+        const validDateA = isNaN(dateA.getTime()) ? new Date(0) : dateA;
+        const validDateB = isNaN(dateB.getTime()) ? new Date(0) : dateB;
+        return validDateB - validDateA;
       }
       if (sortBy === "progress") {
-        return b.progress - a.progress;
+        return (b.progress_c || 0) - (a.progress_c || 0);
       }
       if (sortBy === "priority") {
         const priorityOrder = { High: 3, Medium: 2, Low: 1 };
-        return priorityOrder[b.priority] - priorityOrder[a.priority];
+        return (priorityOrder[b.priority_c] || 1) - (priorityOrder[a.priority_c] || 1);
       }
       return 0;
     });
@@ -296,9 +301,12 @@ const handleStatusChange = async (instanceId, newStatus) => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{instance.assignedTo}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+<td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {formatDistanceToNow(new Date(instance.updatedAt))} ago
+                        {instance.updated_at_c && !isNaN(new Date(instance.updated_at_c).getTime()) 
+                          ? `${formatDistanceToNow(new Date(instance.updated_at_c))} ago`
+                          : 'Unknown'
+                        }
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

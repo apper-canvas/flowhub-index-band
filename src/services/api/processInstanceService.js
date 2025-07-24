@@ -124,8 +124,8 @@ const processInstanceService = {
         progress_c: instanceData.progress || 0,
         assigned_to_c: instanceData.assignedTo,
         priority_c: instanceData.priority || "Medium",
-        started_at_c: instanceData.startedAt,
-        estimated_completion_c: instanceData.estimatedCompletion,
+started_at_c: instanceData.startedAt || null,
+        estimated_completion_c: instanceData.estimatedCompletion || null,
         created_at_c: new Date().toISOString(),
         updated_at_c: new Date().toISOString(),
         process_id_c: parseInt(instanceData.processId)
@@ -175,11 +175,23 @@ const processInstanceService = {
     try {
       // Map and filter data to include only Updateable fields
       const processInstanceRecord = {
-        Id: parseInt(id),
+Id: parseInt(id),
         ...updateData,
         updated_at_c: new Date().toISOString()
       };
 
+      // Handle datetime fields with null checks
+      if (processInstanceRecord.started_at_c && processInstanceRecord.started_at_c !== '') {
+        processInstanceRecord.started_at_c = processInstanceRecord.started_at_c;
+      } else {
+        processInstanceRecord.started_at_c = null;
+      }
+
+      if (processInstanceRecord.estimated_completion_c && processInstanceRecord.estimated_completion_c !== '') {
+        processInstanceRecord.estimated_completion_c = processInstanceRecord.estimated_completion_c;
+      } else {
+        processInstanceRecord.estimated_completion_c = null;
+      }
       // Ensure lookup fields are integers
       if (processInstanceRecord.process_id_c) {
         processInstanceRecord.process_id_c = parseInt(processInstanceRecord.process_id_c);

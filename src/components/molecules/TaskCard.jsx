@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { cn } from "@/utils/cn";
 
 const TaskCard = ({ 
-  task, 
+task, 
   onClick, 
   onEdit,
   isDragging = false,
@@ -15,8 +15,9 @@ const TaskCard = ({
   className,
   ...props 
 }) => {
-const isOverdue = new Date(task.dueDate) < new Date();
-  
+  const isOverdue = task.due_date_c && !isNaN(new Date(task.due_date_c).getTime()) 
+    ? new Date(task.due_date_c) < new Date() 
+    : false;
   const getStatusColor = (status) => {
     const colors = {
       "Not Started": "text-gray-500 bg-gray-100",
@@ -95,13 +96,13 @@ const isOverdue = new Date(task.dueDate) < new Date();
             {task.priority}
           </Badge>
           
-          {task.dueDate && (
+{task.due_date_c && !isNaN(new Date(task.due_date_c).getTime()) && (
             <div className={cn(
               "flex items-center gap-1 text-xs",
               isOverdue ? "text-red-600" : "text-gray-500"
             )}>
               <ApperIcon name="Calendar" size={12} />
-              <span>{format(new Date(task.dueDate), "MMM d")}</span>
+              <span>{format(new Date(task.due_date_c), "MMM d")}</span>
             </div>
           )}
         </div>
