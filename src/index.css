@@ -182,3 +182,34 @@
 .step-status-indicator.blocked {
   @apply bg-red-100 text-red-700;
 }
+
+/* Flowchart View Styles */
+.flowchart-stage {
+  @apply transition-all duration-300 hover:scale-105;
+}
+
+.flowchart-stage:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.flowchart-connector {
+  @apply relative;
+}
+
+.flowchart-connector::after {
+  content: '';
+  @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
+  width: 0;
+  height: 0;
+  border-left: 8px solid #9CA3AF;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+
+/* Line clamp utility for descriptions */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

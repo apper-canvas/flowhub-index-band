@@ -1,7 +1,37 @@
 import React from "react";
 import { motion } from "framer-motion";
-import ApperIcon from "@/components/ApperIcon";
 import { cn } from "@/utils/cn";
+import ApperIcon from "@/components/ApperIcon";
+
+export const getStepTypeColor = (stepType) => {
+  const colors = {
+    Manual: "bg-blue-100 text-blue-800",
+    Automated: "bg-green-100 text-green-800", 
+    Review: "bg-yellow-100 text-yellow-800",
+    Approval: "bg-purple-100 text-purple-800"
+  };
+  return colors[stepType] || colors.Manual;
+};
+
+export const getStatusColor = (status) => {
+  const colors = {
+    "Not Started": "text-gray-500 bg-gray-100",
+    "In Progress": "text-blue-700 bg-blue-100",
+    "Completed": "text-green-700 bg-green-100",
+    "Blocked": "text-red-700 bg-red-100"
+  };
+  return colors[status] || colors["Not Started"];
+};
+
+export const getStatusIcon = (status) => {
+  const icons = {
+    "Not Started": "Circle",
+    "In Progress": "Clock", 
+    "Completed": "CheckCircle",
+    "Blocked": "AlertCircle"
+  };
+  return icons[status] || icons["Not Started"];
+};
 
 const StageColumn = ({ 
   stage, 
@@ -14,37 +44,6 @@ const StageColumn = ({
   className 
 }) => {
   const isAtLimit = stage.wipLimit && taskCount >= stage.wipLimit;
-  
-const getStepTypeColor = (stepType) => {
-    const colors = {
-      Manual: "bg-blue-100 text-blue-800",
-      Automated: "bg-green-100 text-green-800", 
-      Review: "bg-yellow-100 text-yellow-800",
-      Approval: "bg-purple-100 text-purple-800"
-    };
-    return colors[stepType] || colors.Manual;
-};
-
-  const getStatusColor = (status) => {
-    const colors = {
-      "Not Started": "text-gray-500 bg-gray-100",
-      "In Progress": "text-blue-700 bg-blue-100",
-      "Completed": "text-green-700 bg-green-100",
-      "Blocked": "text-red-700 bg-red-100"
-    };
-    return colors[status] || colors["Not Started"];
-  };
-
-  const getStatusIcon = (status) => {
-    const icons = {
-      "Not Started": "Circle",
-      "In Progress": "Clock", 
-      "Completed": "CheckCircle",
-      "Blocked": "AlertCircle"
-    };
-    return icons[status] || icons["Not Started"];
-  };
-
   return (
     <div className={cn(
       "stage-column flex-shrink-0 w-80",

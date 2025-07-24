@@ -8,13 +8,14 @@ import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
 import Button from "@/components/atoms/Button";
 import ApperIcon from "@/components/ApperIcon";
+import FlowchartView from "@/components/organisms/FlowchartView";
 import taskService from "@/services/api/taskService";
 import processService from "@/services/api/processService";
 import processInstanceService from "@/services/api/processInstanceService";
 import { toast } from "react-toastify";
 
 const ProcessBoard = ({ process, onProcessUpdate }) => {
-const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [draggedTask, setDraggedTask] = useState(null);
@@ -23,6 +24,7 @@ const [tasks, setTasks] = useState([]);
   const [stepModalOpen, setStepModalOpen] = useState(false);
   const [startingInstance, setStartingInstance] = useState(false);
   const [stepStatuses, setStepStatuses] = useState({});
+  const [viewMode, setViewMode] = useState('list'); // 'list' or 'flowchart'
 const handleStartInstance = async () => {
     try {
       setStartingInstance(true);
@@ -194,67 +196,98 @@ const handleSaveStep = async (updatedStep) => {
             Manage tasks and workflow stages
           </p>
         </div>
-        <Button
-          onClick={handleStartInstance}
-          disabled={startingInstance}
-          className="flex items-center gap-2"
-        >
-          {startingInstance ? (
-            <ApperIcon name="Loader2" size={16} className="animate-spin" />
-          ) : (
-            <ApperIcon name="Play" size={16} />
-          )}
-          {startingInstance ? "Starting..." : "Start Instance"}
-        </Button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center bg-gray-100 rounded-lg p-1">
+            <Button
+              variant={viewMode === 'list' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('list')}
+              className="flex items-center gap-2 px-3 py-2"
+            >
+              <ApperIcon name="List" size={16} />
+              List
+            </Button>
+            <Button
+              variant={viewMode === 'flowchart' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('flowchart')}
+              className="flex items-center gap-2 px-3 py-2"
+            >
+              <ApperIcon name="GitBranch" size={16} />
+              Flowchart
+            </Button>
+          </div>
+          <Button
+            onClick={handleStartInstance}
+            disabled={startingInstance}
+            className="flex items-center gap-2"
+          >
+            {startingInstance ? (
+              <ApperIcon name="Loader2" size={16} className="animate-spin" />
+            ) : (
+              <ApperIcon name="Play" size={16} />
+            )}
+            {startingInstance ? "Starting..." : "Start Instance"}
+          </Button>
+        </div>
       </div>
-      <div className="flex gap-6 p-6 overflow-x-auto custom-scrollbar min-h-[calc(100vh-200px)]">
-{process.stages.map((stage) => {
-          const stageTasks = getTasksByStage(stage.id);
-          const stepStatus = stepStatuses[stage.id];
-          
-          return (
-            <StageColumn
-              key={stage.id}
-              stage={stage}
-              taskCount={stageTasks.length}
-              isOver={dragOverStage === stage.id}
-              stepStatus={stepStatus}
-              onAddTask={() => toast.info("Add task feature coming soon!")}
-              onEditStep={() => handleEditStep(stage)}
-            >
-            <div
-              onDragOver={(e) => handleDragOver(e, stage.id)}
-              onDragLeave={handleDragLeave}
-              onDrop={(e) => handleDrop(e, stage.id)}
-              className="space-y-3 min-h-[100px]"
-            >
-              {stageTasks.length === 0 ? (
-                <div className="flex items-center justify-center h-32 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
-                  Drop tasks here
+{viewMode === 'list' ? (
+        <div className="flex gap-6 p-6 overflow-x-auto custom-scrollbar min-h-[calc(100vh-200px)]">
+          {process.stages.map((stage) => {
+            const stageTasks = getTasksByStage(stage.id);
+            const stepStatus = stepStatuses[stage.id];
+            
+            return (
+              <StageColumn
+                key={stage.id}
+                stage={stage}
+                taskCount={stageTasks.length}
+                isOver={dragOverStage === stage.id}
+                stepStatus={stepStatus}
+                onAddTask={() => toast.info("Add task feature coming soon!")}
+                onEditStep={() => handleEditStep(stage)}
+              >
+                <div
+                  onDragOver={(e) => handleDragOver(e, stage.id)}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, stage.id)}
+                  className="space-y-3 min-h-[100px]"
+                >
+                  {stageTasks.length === 0 ? (
+                    <div className="flex items-center justify-center h-32 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+                      Drop tasks here
+                    </div>
+                  ) : (
+                    stageTasks.map((task) => (
+                      <div
+                        key={task.Id}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, task)}
+                        className="group"
+                      >
+                        <TaskCard
+                          task={task}
+                          stepStatus={stepStatus}
+                          onClick={() => toast.info("Task details modal coming soon!")}
+                          onEdit={() => toast.info("Edit task feature coming soon!")}
+                          isDragging={draggedTask?.Id === task.Id}
+                        />
+                      </div>
+                    ))
+                  )}
                 </div>
-              ) : (
-                stageTasks.map((task) => (
-                  <div
-                    key={task.Id}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, task)}
-                    className="group"
-                  >
-                    <TaskCard
-                      task={task}
-                      stepStatus={stepStatus}
-                      onClick={() => toast.info("Task details modal coming soon!")}
-                      onEdit={() => toast.info("Edit task feature coming soon!")}
-                      isDragging={draggedTask?.Id === task.Id}
-                    />
-                  </div>
-                ))
-              )}
-            </div>
-          </StageColumn>
-        );
-})}
-      </div>
+              </StageColumn>
+            );
+          })}
+        </div>
+      ) : (
+        <FlowchartView 
+          process={process}
+          stepStatuses={stepStatuses}
+          getTasksByStage={getTasksByStage}
+          onEditStep={handleEditStep}
+        />
+      )}
 
       <StepDetailsModal
         isOpen={stepModalOpen}
