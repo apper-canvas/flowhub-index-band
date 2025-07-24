@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
+import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
-import { cn } from "@/utils/cn";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -32,7 +32,7 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
-            {navigation.map((item) => {
+{navigation.map((item) => {
               const isActive = location.pathname === item.href;
               return (
                 <Link
@@ -42,7 +42,7 @@ const Header = () => {
                     "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
                     isActive
                       ? "bg-gradient-to-r from-primary/10 to-secondary/10 text-primary border border-primary/20"
-                      : "text-gray-600 hover:text-primary hover:bg-primary/5"
+                      : "text-gray-600 hover:text-primary hover:bg-gray-50"
                   )}
                 >
                   <ApperIcon name={item.icon} size={16} />
@@ -52,7 +52,7 @@ const Header = () => {
             })}
           </nav>
 
-          {/* Desktop Actions */}
+          {/* Action Buttons */}
           <div className="hidden md:flex items-center gap-3">
             <Button variant="ghost" size="sm">
               <ApperIcon name="Bell" size={16} />

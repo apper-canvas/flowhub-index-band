@@ -6,17 +6,53 @@ import StepDetailsModal from "@/components/molecules/StepDetailsModal";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
+import Button from "@/components/atoms/Button";
+import ApperIcon from "@/components/ApperIcon";
 import taskService from "@/services/api/taskService";
 import processService from "@/services/api/processService";
+import processInstanceService from "@/services/api/processInstanceService";
 import { toast } from "react-toastify";
+
 const ProcessBoard = ({ process, onProcessUpdate }) => {
-  const [tasks, setTasks] = useState([]);
+const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [draggedTask, setDraggedTask] = useState(null);
   const [dragOverStage, setDragOverStage] = useState(null);
   const [editingStep, setEditingStep] = useState(null);
   const [stepModalOpen, setStepModalOpen] = useState(false);
+  const [startingInstance, setStartingInstance] = useState(false);
+
+  const handleStartInstance = async () => {
+    try {
+      setStartingInstance(true);
+      const instanceName = `${process.ProcessName || process.name} - ${new Date().toLocaleDateString()}`;
+      
+      const instanceData = {
+        processId: process.Id,
+        processName: process.ProcessName || process.name,
+        instanceName,
+        status: "Active",
+        currentStageIndex: 0,
+        currentStageName: process.stages[0]?.name || "Started",
+        totalStages: process.stages.length,
+        progress: Math.round((1 / process.stages.length) * 100),
+        assignedTo: "Current User",
+        priority: "Medium",
+        startedAt: new Date().toISOString(),
+        estimatedCompletion: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days from now
+      };
+
+      await processInstanceService.create(instanceData);
+      toast.success(`Process instance "${instanceName}" started successfully!`);
+    } catch (error) {
+      console.error("Error starting process instance:", error);
+      toast.error("Failed to start process instance");
+    } finally {
+      setStartingInstance(false);
+    }
+  };
+
   useEffect(() => {
     loadTasks();
   }, [process.Id]);
@@ -109,7 +145,29 @@ const handleEditStep = (stage) => {
   };
 
   return (
-    <>
+<>
+      <div className="flex items-center justify-between mb-4 px-6">
+        <div>
+          <h2 className="text-xl font-semibold text-gray-900">
+            {process.ProcessName || process.name}
+          </h2>
+          <p className="text-sm text-gray-600 mt-1">
+            Manage tasks and workflow stages
+          </p>
+        </div>
+        <Button
+          onClick={handleStartInstance}
+          disabled={startingInstance}
+          className="flex items-center gap-2"
+        >
+          {startingInstance ? (
+            <ApperIcon name="Loader2" size={16} className="animate-spin" />
+          ) : (
+            <ApperIcon name="Play" size={16} />
+          )}
+          {startingInstance ? "Starting..." : "Start Instance"}
+        </Button>
+      </div>
       <div className="flex gap-6 p-6 overflow-x-auto custom-scrollbar min-h-[calc(100vh-200px)]">
         {process.stages.map((stage) => {
           const stageTasks = getTasksByStage(stage.id);

@@ -1,11 +1,13 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Route, Router, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import Header from "@/components/organisms/Header";
-import ProcessesPage from "@/components/pages/ProcessesPage";
-import DashboardPage from "@/components/pages/DashboardPage";
-import TemplatesPage from "@/components/pages/TemplatesPage";
+import ProcessInstancesPage from "@/components/pages/ProcessInstancesPage";
+import "@/index.css";
 import SettingsPage from "@/components/pages/SettingsPage";
+import TemplatesPage from "@/components/pages/TemplatesPage";
+import DashboardPage from "@/components/pages/DashboardPage";
+import ProcessesPage from "@/components/pages/ProcessesPage";
+import Header from "@/components/organisms/Header";
 
 function App() {
   return (
@@ -14,8 +16,8 @@ function App() {
         <Header />
         <main>
           <Routes>
-            <Route path="/" element={<ProcessesPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/processes" element={<ProcessesPage />} />
+            <Route path="/instances" element={<ProcessInstancesPage />} />
             <Route path="/templates" element={<TemplatesPage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Routes>
