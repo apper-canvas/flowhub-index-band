@@ -1,114 +1,148 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/utils/cn";
-import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
+import React, { useContext, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { motion } from 'framer-motion';
+import { AuthContext } from '@/App';
+import ApperIcon from '@/components/ApperIcon';
+import Avatar from '@/components/atoms/Avatar';
+import Button from '@/components/atoms/Button';
 
 const Header = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { logout } = useContext(AuthContext);
+  const { user, isAuthenticated } = useSelector((state) => state.user);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
-  const navigation = [
-    { name: "Processes", href: "/", icon: "Workflow" },
-    { name: "Dashboard", href: "/dashboard", icon: "BarChart3" },
-    { name: "Templates", href: "/templates", icon: "FileTemplate" },
-    { name: "Settings", href: "/settings", icon: "Settings" }
+  const navItems = [
+    { path: '/', label: 'Processes', icon: 'Workflow' },
+    { path: '/dashboard', label: 'Dashboard', icon: 'BarChart3' },
+    { path: '/instances', label: 'Instances', icon: 'PlayCircle' },
+    { path: '/templates', label: 'Templates', icon: 'FileTemplate' },
+    { path: '/settings', label: 'Settings', icon: 'Settings' }
   ];
 
+  const handleLogout = async () => {
+    await logout();
+    setShowUserMenu(false);
+  };
+
+  const isActivePath = (path) => {
+    if (path === '/') {
+      return location.pathname === '/' || location.pathname === '/processes';
+    }
+    return location.pathname === path;
+  };
+
+  if (!isAuthenticated) {
+    return null; // Don't show header on auth pages
+  }
+
   return (
-    <header className="glass-effect border-b border-white/20 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-xl flex items-center justify-center">
-              <ApperIcon name="Workflow" className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 bg-gradient-to-r from-primary to-primary-dark rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-xl">F</span>
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              FlowHub
-            </span>
+            <span className="text-xl font-bold text-gray-900">FlowHub</span>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Navigation */}
           <nav className="hidden md:flex items-center gap-1">
-{navigation.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
-                    isActive
-                      ? "bg-gradient-to-r from-primary/10 to-secondary/10 text-primary border border-primary/20"
-                      : "text-gray-600 hover:text-primary hover:bg-gray-50"
-                  )}
-                >
-                  <ApperIcon name={item.icon} size={16} />
-                  {item.name}
-                </Link>
-              );
-            })}
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`
+                  flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                  ${isActivePath(item.path)
+                    ? 'bg-primary text-white shadow-md'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  }
+                `}
+              >
+                <ApperIcon name={item.icon} size={16} />
+                {item.label}
+              </Link>
+            ))}
           </nav>
 
-          {/* Action Buttons */}
-          <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" size="sm">
-              <ApperIcon name="Bell" size={16} />
-            </Button>
-            <Button variant="primary" size="sm">
-              <ApperIcon name="Plus" size={16} />
-              New Process
-            </Button>
-          </div>
+          {/* User Menu */}
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <Avatar 
+                  size="sm" 
+                  fallback={user?.firstName?.charAt(0) + user?.lastName?.charAt(0) || 'U'} 
+                />
+                <div className="hidden sm:block text-left">
+                  <div className="text-sm font-medium text-gray-900">
+                    {user?.firstName} {user?.lastName}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {user?.emailAddress}
+                  </div>
+                </div>
+                <ApperIcon name="ChevronDown" size={16} className="text-gray-400" />
+              </button>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-gray-600 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
-          >
-            <ApperIcon name={mobileMenuOpen ? "X" : "Menu"} size={20} />
-          </button>
+              {/* User Dropdown */}
+              {showUserMenu && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+                >
+                  <div className="px-4 py-2 border-b border-gray-100">
+                    <div className="text-sm font-medium text-gray-900">
+                      {user?.firstName} {user?.lastName}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {user?.emailAddress}
+                    </div>
+                  </div>
+                  
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  >
+                    <ApperIcon name="LogOut" size={16} />
+                    Sign out
+                  </button>
+                </motion.div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Mobile Navigation */}
-      {mobileMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="md:hidden bg-white border-t border-gray-200"
-        >
-          <div className="px-4 py-3 space-y-1">
-            {navigation.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-gradient-to-r from-primary/10 to-secondary/10 text-primary"
-                      : "text-gray-600 hover:text-primary hover:bg-gray-50"
-                  )}
-                >
-                  <ApperIcon name={item.icon} size={16} />
-                  {item.name}
-                </Link>
-              );
-            })}
-            <div className="pt-3 border-t border-gray-200">
-              <Button variant="primary" size="sm" className="w-full">
-                <ApperIcon name="Plus" size={16} />
-                New Process
-              </Button>
-            </div>
-          </div>
-        </motion.div>
-      )}
+      <div className="md:hidden border-t border-gray-200">
+        <nav className="flex overflow-x-auto">
+          {navItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`
+                flex items-center gap-2 px-4 py-3 text-sm font-medium whitespace-nowrap
+                ${isActivePath(item.path)
+                  ? 'text-primary border-b-2 border-primary'
+                  : 'text-gray-600'
+                }
+              `}
+            >
+              <ApperIcon name={item.icon} size={16} />
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
     </header>
   );
 };

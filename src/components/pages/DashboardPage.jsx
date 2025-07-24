@@ -21,7 +21,7 @@ const DashboardPage = () => {
     loadData();
   }, []);
 
-  const loadData = async () => {
+const loadData = async () => {
     try {
       setLoading(true);
       setError("");
@@ -39,7 +39,7 @@ const DashboardPage = () => {
     }
   };
 
-  const getRecentTasks = () => {
+const getRecentTasks = () => {
     return tasks
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       .slice(0, 5);
@@ -95,7 +95,7 @@ const DashboardPage = () => {
           
           <div className="space-y-3">
             {recentTasks.map((task) => (
-              <motion.div
+<motion.div
                 key={task.Id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -136,7 +136,7 @@ const DashboardPage = () => {
                 Math.round((completedTasks / processTasks.length) * 100) : 0;
 
               return (
-                <motion.div
+<motion.div
                   key={process.Id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -164,7 +164,7 @@ const DashboardPage = () => {
       </div>
 
       {/* Overdue Tasks Alert */}
-      {overdueTasks.length > 0 && (
+{overdueTasks.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

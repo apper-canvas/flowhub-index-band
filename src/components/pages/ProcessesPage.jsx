@@ -57,7 +57,7 @@ const handleCreateFromTemplate = async () => {
     }
   };
 
-  const handleProcessUpdate = (updatedProcess) => {
+const handleProcessUpdate = (updatedProcess) => {
     setSelectedProcess(updatedProcess);
     // Update in the processes list as well
     setProcesses(prev => 

@@ -39,7 +39,7 @@ const ProcessInstancesPage = () => {
     }
   };
 
-  const handleStatusChange = async (instanceId, newStatus) => {
+const handleStatusChange = async (instanceId, newStatus) => {
     try {
       await processInstanceService.updateStatus(instanceId, newStatus);
       setInstances(prev => 
@@ -252,7 +252,7 @@ const ProcessInstancesPage = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredAndSortedInstances.map((instance) => (
+{filteredAndSortedInstances.map((instance) => (
                   <tr key={instance.Id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
