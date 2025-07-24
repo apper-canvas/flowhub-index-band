@@ -49,6 +49,14 @@ const ProcessesPage = () => {
     );
   }
 
+const handleProcessUpdate = (updatedProcess) => {
+    setSelectedProcess(updatedProcess);
+    // Update in the processes list as well
+    setProcesses(prev => 
+      prev.map(p => p.Id === updatedProcess.Id ? updatedProcess : p)
+    );
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -62,7 +70,10 @@ const ProcessesPage = () => {
         />
         
         {selectedProcess && (
-          <ProcessBoard process={selectedProcess} />
+          <ProcessBoard 
+            process={selectedProcess} 
+            onProcessUpdate={handleProcessUpdate}
+          />
         )}
       </div>
     </motion.div>

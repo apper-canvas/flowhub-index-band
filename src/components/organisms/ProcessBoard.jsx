@@ -2,19 +2,21 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import StageColumn from "@/components/molecules/StageColumn";
 import TaskCard from "@/components/molecules/TaskCard";
+import StepDetailsModal from "@/components/molecules/StepDetailsModal";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
 import taskService from "@/services/api/taskService";
+import processService from "@/services/api/processService";
 import { toast } from "react-toastify";
-
-const ProcessBoard = ({ process }) => {
+const ProcessBoard = ({ process, onProcessUpdate }) => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [draggedTask, setDraggedTask] = useState(null);
   const [dragOverStage, setDragOverStage] = useState(null);
-
+  const [editingStep, setEditingStep] = useState(null);
+  const [stepModalOpen, setStepModalOpen] = useState(false);
   useEffect(() => {
     loadTasks();
   }, [process.Id]);
@@ -81,19 +83,46 @@ const ProcessBoard = ({ process }) => {
   if (loading) return <Loading type="kanban" />;
   if (error) return <Error message={error} onRetry={loadTasks} />;
 
+const handleEditStep = (stage) => {
+    setEditingStep(stage);
+    setStepModalOpen(true);
+  };
+
+  const handleSaveStep = async (updatedStep) => {
+    try {
+      await processService.updateStage(process.Id, updatedStep.id, updatedStep);
+      toast.success("Step details updated successfully!");
+      
+      // Update the process in parent component if callback provided
+      if (onProcessUpdate) {
+        const updatedProcess = { ...process };
+        const stageIndex = updatedProcess.stages.findIndex(s => s.id === updatedStep.id);
+        if (stageIndex !== -1) {
+          updatedProcess.stages[stageIndex] = updatedStep;
+          onProcessUpdate(updatedProcess);
+        }
+      }
+    } catch (error) {
+      toast.error("Failed to update step details");
+      console.error("Error updating step:", error);
+    }
+  };
+
   return (
-    <div className="flex gap-6 p-6 overflow-x-auto custom-scrollbar min-h-[calc(100vh-200px)]">
-      {process.stages.map((stage) => {
-        const stageTasks = getTasksByStage(stage.id);
-        
-        return (
-          <StageColumn
-            key={stage.id}
-            stage={stage}
-            taskCount={stageTasks.length}
-            isOver={dragOverStage === stage.id}
-            onAddTask={() => toast.info("Add task feature coming soon!")}
-          >
+    <>
+      <div className="flex gap-6 p-6 overflow-x-auto custom-scrollbar min-h-[calc(100vh-200px)]">
+        {process.stages.map((stage) => {
+          const stageTasks = getTasksByStage(stage.id);
+          
+          return (
+            <StageColumn
+              key={stage.id}
+              stage={stage}
+              taskCount={stageTasks.length}
+              isOver={dragOverStage === stage.id}
+              onAddTask={() => toast.info("Add task feature coming soon!")}
+              onEditStep={() => handleEditStep(stage)}
+            >
             <div
               onDragOver={(e) => handleDragOver(e, stage.id)}
               onDragLeave={handleDragLeave}
@@ -124,8 +153,19 @@ const ProcessBoard = ({ process }) => {
             </div>
           </StageColumn>
         );
-      })}
-    </div>
+})}
+      </div>
+
+      <StepDetailsModal
+        isOpen={stepModalOpen}
+        onClose={() => {
+          setStepModalOpen(false);
+          setEditingStep(null);
+        }}
+        step={editingStep}
+        onSave={handleSaveStep}
+      />
+    </>
   );
 };
 

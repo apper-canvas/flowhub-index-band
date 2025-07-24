@@ -42,6 +42,22 @@ const processService = {
       const deleted = processes.splice(index, 1)[0];
       return { ...deleted };
     }
+return null;
+  },
+
+  async updateStage(processId, stageId, stageData) {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    const processIndex = processes.findIndex(p => p.Id === parseInt(processId));
+    if (processIndex !== -1) {
+      const stageIndex = processes[processIndex].stages.findIndex(s => s.id === stageId);
+      if (stageIndex !== -1) {
+        processes[processIndex].stages[stageIndex] = { 
+          ...processes[processIndex].stages[stageIndex], 
+          ...stageData 
+        };
+        return { ...processes[processIndex].stages[stageIndex] };
+      }
+    }
     return null;
   }
 };

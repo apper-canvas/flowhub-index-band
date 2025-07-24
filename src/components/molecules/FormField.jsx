@@ -5,6 +5,7 @@ const FormField = ({
   label, 
   error, 
   required = false, 
+  hint,
   className,
   children 
 }) => {
@@ -17,6 +18,9 @@ const FormField = ({
         </label>
       )}
       {children}
+      {hint && !error && (
+        <p className="text-xs text-gray-500">{hint}</p>
+      )}
       {error && (
         <p className="text-sm text-red-600">{error}</p>
       )}

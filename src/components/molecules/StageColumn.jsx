@@ -9,10 +9,21 @@ const StageColumn = ({
   isOver = false,
   children, 
   onAddTask,
+  onEditStep,
   className 
 }) => {
   const isAtLimit = stage.wipLimit && taskCount >= stage.wipLimit;
   
+const getStepTypeColor = (stepType) => {
+    const colors = {
+      Manual: "bg-blue-100 text-blue-800",
+      Automated: "bg-green-100 text-green-800", 
+      Review: "bg-yellow-100 text-yellow-800",
+      Approval: "bg-purple-100 text-purple-800"
+    };
+    return colors[stepType] || colors.Manual;
+  };
+
   return (
     <div className={cn(
       "stage-column flex-shrink-0 w-80",
@@ -21,24 +32,52 @@ const StageColumn = ({
     )}>
       <div className="bg-white rounded-xl shadow-lg h-full flex flex-col">
         <div className="p-4 border-b border-gray-100">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div 
                 className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: stage.color }}
               />
-              <h3 className="font-semibold text-gray-900">{stage.name}</h3>
+              <h3 className="font-semibold text-gray-900">{stage.title || stage.name}</h3>
               <span className="text-sm text-gray-500">({taskCount})</span>
             </div>
             
-            <button
-              onClick={onAddTask}
-              className="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
-              title="Add Task"
-            >
-              <ApperIcon name="Plus" size={16} />
-            </button>
+            <div className="flex items-center gap-1">
+              {onEditStep && (
+                <button
+                  onClick={onEditStep}
+                  className="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                  title="Edit Step Details"
+                >
+                  <ApperIcon name="Settings" size={16} />
+                </button>
+              )}
+              <button
+                onClick={onAddTask}
+                className="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                title="Add Task"
+              >
+                <ApperIcon name="Plus" size={16} />
+              </button>
+            </div>
           </div>
+
+          {/* Step Details */}
+          {stage.description && (
+            <div className="mb-3">
+              <p className="text-xs text-gray-600 mb-2 line-clamp-2">{stage.description}</p>
+              <div className="flex items-center gap-2 text-xs">
+                <span className="text-gray-500">Duration:</span>
+                <span className="font-medium">{stage.estimatedDuration}</span>
+                <span className={cn(
+                  "px-2 py-0.5 rounded-full text-xs font-medium",
+                  getStepTypeColor(stage.stepType)
+                )}>
+                  {stage.stepType}
+                </span>
+              </div>
+            </div>
+          )}
           
           {stage.wipLimit && (
             <div className="flex items-center gap-2">

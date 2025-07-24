@@ -2,10 +2,14 @@
   {
     "Id": 1,
     "name": "Software Development",
-    "stages": [
+"stages": [
       {
         "id": "stage-1",
         "name": "Backlog",
+        "title": "Backlog",
+        "description": "Collect and prioritize new tasks and requirements. Review incoming requests and organize them for development.",
+        "estimatedDuration": "Ongoing",
+        "stepType": "Manual",
         "order": 1,
         "wipLimit": 10,
         "color": "#6B7280"
@@ -13,6 +17,10 @@
       {
         "id": "stage-2", 
         "name": "In Progress",
+        "title": "In Progress",
+        "description": "Active development phase where tasks are being worked on by team members. Code is written and features are implemented.",
+        "estimatedDuration": "3-5 days",
+        "stepType": "Manual",
         "order": 2,
         "wipLimit": 5,
         "color": "#3B82F6"
@@ -20,6 +28,10 @@
       {
         "id": "stage-3",
         "name": "Review",
+        "title": "Code Review",
+        "description": "Peer review process to ensure code quality, security, and adherence to standards. Includes testing and feedback.",
+        "estimatedDuration": "1-2 days",
+        "stepType": "Review",
         "order": 3,
         "wipLimit": 3,
         "color": "#F59E0B"
@@ -27,6 +39,10 @@
       {
         "id": "stage-4",
         "name": "Done",
+        "title": "Completed",
+        "description": "Tasks that have been completed, tested, and deployed to production. Ready for client delivery.",
+        "estimatedDuration": "Immediate",
+        "stepType": "Automated",
         "order": 4,
         "wipLimit": null,
         "color": "#10B981"
@@ -37,10 +53,14 @@
   {
     "Id": 2,
     "name": "Content Creation",
-    "stages": [
+"stages": [
       {
         "id": "stage-5",
         "name": "Ideas",
+        "title": "Content Ideas",
+        "description": "Brainstorm and research content ideas. Gather topics, keywords, and create content brief for writers.",
+        "estimatedDuration": "2-3 hours",
+        "stepType": "Manual",
         "order": 1,
         "wipLimit": 15,
         "color": "#6B7280"
@@ -48,6 +68,10 @@
       {
         "id": "stage-6",
         "name": "Writing",
+        "title": "Content Writing",
+        "description": "Create the actual content based on the brief. Write articles, blog posts, or other content materials.",
+        "estimatedDuration": "4-6 hours",
+        "stepType": "Manual",
         "order": 2,
         "wipLimit": 3,
         "color": "#3B82F6"
@@ -55,6 +79,10 @@
       {
         "id": "stage-7",
         "name": "Editing",
+        "title": "Content Review & Editing",
+        "description": "Review content for grammar, style, accuracy, and brand consistency. Make necessary revisions and improvements.",
+        "estimatedDuration": "1-2 hours",
+        "stepType": "Review",
         "order": 3,
         "wipLimit": 2,
         "color": "#F59E0B"
@@ -62,6 +90,10 @@
       {
         "id": "stage-8",
         "name": "Published",
+        "title": "Content Published",
+        "description": "Content has been published to the appropriate channels and is live for the audience.",
+        "estimatedDuration": "30 minutes",
+        "stepType": "Automated",
         "order": 4,
         "wipLimit": null,
         "color": "#10B981"
@@ -72,10 +104,14 @@
   {
     "Id": 3,
     "name": "Client Onboarding",
-    "stages": [
+"stages": [
       {
         "id": "stage-9",
         "name": "New Leads",
+        "title": "Lead Generation",
+        "description": "Initial contact with potential clients. Capture lead information and qualify prospects for further engagement.",
+        "estimatedDuration": "1-2 hours",
+        "stepType": "Manual",
         "order": 1,
         "wipLimit": 20,
         "color": "#6B7280"
@@ -83,6 +119,10 @@
       {
         "id": "stage-10",
         "name": "Discovery",
+        "title": "Discovery Call",
+        "description": "Conduct discovery sessions to understand client needs, requirements, and project scope. Gather detailed information.",
+        "estimatedDuration": "2-3 hours",
+        "stepType": "Manual",
         "order": 2,
         "wipLimit": 5,
         "color": "#3B82F6"
@@ -90,6 +130,10 @@
       {
         "id": "stage-11",
         "name": "Proposal",
+        "title": "Proposal Creation",
+        "description": "Create detailed project proposal including scope, timeline, pricing, and terms. Await client approval.",
+        "estimatedDuration": "4-6 hours",
+        "stepType": "Approval",
         "order": 3,
         "wipLimit": 3,
         "color": "#F59E0B"
@@ -97,6 +141,10 @@
       {
         "id": "stage-12",
         "name": "Active Client",
+        "title": "Active Client",
+        "description": "Client has signed the contract and project is underway. Regular communication and project management.",
+        "estimatedDuration": "Ongoing",
+        "stepType": "Manual",
         "order": 4,
         "wipLimit": null,
         "color": "#10B981"
